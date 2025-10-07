@@ -31,23 +31,42 @@ public class EmployeeResponseTransformer extends ResponseTransformer {
         //                 .build();
         
 
-        try {
-            // Extract employeeId from the URL
+        // try {
+        //     // Extract employeeId from the URL
+        //     String[] parts = request.getUrl().split("/");
+        //     String employeeId = parts[parts.length - 1];
+
+        //     // Define the file path in classpath
+        //     String path = "__files/" + employeeId + ".json";
+        //     ClassPathResource resource = new ClassPathResource(path);
+
+        //     if (resource.exists()) {
+        //         // ✅ Read file content
+        //         byte[] content = Files.readAllBytes(resource.getFile().toPath());
+
+        //         return Response.Builder.like(response)
+        //                 .status(200)
+        //                 .body(content)
+        //                 .build();
+
+         try {
+            // Extract employeeId from URL
             String[] parts = request.getUrl().split("/");
             String employeeId = parts[parts.length - 1];
 
-            // Define the file path in classpath
+            // Define file path inside classpath
             String path = "__files/" + employeeId + ".json";
             ClassPathResource resource = new ClassPathResource(path);
 
             if (resource.exists()) {
-                // ✅ Read file content
-                byte[] content = Files.readAllBytes(resource.getFile().toPath());
-
-                return Response.Builder.like(response)
-                        .status(200)
-                        .body(content)
-                        .build();
+                // ✅ Read directly from InputStream (works inside JAR/Docker too)
+                try (InputStream is = resource.getInputStream()) {
+                    byte[] content = is.readAllBytes();
+                    return Response.Builder.like(response)
+                            .status(200)
+                            .body(content)
+                            .build();
+                }
             } else {
                 String body = "{\"errorCode\":\"EMPLOYEE_NOT_FOUND\",\"message\":\"Employee with id "
                         + employeeId + " not found.\"}";
