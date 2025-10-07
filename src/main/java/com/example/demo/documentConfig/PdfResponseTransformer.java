@@ -15,7 +15,7 @@ public class PdfResponseTransformer extends ResponseTransformer {
     public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
         String[] parts = request.getUrl().split("/");
         String pdfId = parts[parts.length - 1];
-        File pdfFile = new File("src/main/resources/__files/document/" + pdfId + ".jpg");
+        File pdfFile = new File("./src/main/resources/__files/document/" + pdfId + ".jpg");
 
         try {
             if (pdfFile.exists()) {
